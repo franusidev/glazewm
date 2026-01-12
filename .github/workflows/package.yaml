@@ -5,11 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  next-version:
-    uses: semantic-release-action/next-release-version/.github/workflows/next-release-version.yml@3c2d88ce0390012bac0b8383059a0b67d2594dc1
-
   package:
-    needs: [next-version]
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -31,16 +27,8 @@ jobs:
           dotnet tool install --global AzureSignTool --version 5.0.0
 
       - name: Run packaging script
-        env:
-          AZ_VAULT_URL: ${{ secrets.AZ_VAULT_URL }}
-          AZ_CERT_NAME: ${{ secrets.AZ_CERT_NAME }}
-          AZ_CLIENT_ID: ${{ secrets.AZ_CLIENT_ID }}
-          AZ_CLIENT_SECRET: ${{ secrets.AZ_CLIENT_SECRET }}
-          AZ_TENANT_ID: ${{ secrets.AZ_TENANT_ID }}
-          RFC3161_TIMESTAMP_URL: ${{ vars.RFC3161_TIMESTAMP_URL }}
         run: |
-          ./resources/scripts/package.ps1 -VersionNumber ${{ needs.next-version.outputs.new-release-version || '3.1.0' }}
-
+          ./resources/scripts/package.ps1 -VersionNumber '3.9.1-beta.0'
       - uses: actions/upload-artifact@v4
         with:
           name: installers
